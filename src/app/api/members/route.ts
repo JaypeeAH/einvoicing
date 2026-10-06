@@ -14,7 +14,12 @@ export const GET = apiAuthHandler(
 export const POST = apiAuthHandler(
     async (req, _ctx, { supabase, organizationId, user, role }) => {
         const payload = await parseJsonBody(req, InviteMemberFormSchema)
-        const member = await inviteMember(supabase, organizationId, { id: user.id, role }, payload)
+        const member = await inviteMember(
+            supabase,
+            organizationId,
+            { id: user.id, role, fullName: user.fullName },
+            payload,
+        )
         return getJsonResponse(member, { status: 201 })
     },
     { action: ACTION_USER_MANAGE },

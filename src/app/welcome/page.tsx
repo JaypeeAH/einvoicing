@@ -8,6 +8,7 @@ import RolesSection from '@/components/landing/RolesSection'
 import ComplianceSection from '@/components/landing/ComplianceSection'
 import FaqSection from '@/components/landing/FaqSection'
 import CallToActionSection from '@/components/landing/CallToActionSection'
+import AuthHashHandler from '@/components/auth/AuthHashHandler'
 import LandingMotionConfig from '@/components/landing/LandingMotionConfig'
 import EnvironmentBanner from '@/components/template/EnvironmentBanner'
 import Footer from '@/components/template/Footer'
@@ -23,6 +24,7 @@ export default function WelcomePage() {
     return (
         <LandingMotionConfig>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+                <AuthHashHandler />
                 <EnvironmentBanner />
                 <LandingHeader />
                 <main>

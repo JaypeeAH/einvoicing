@@ -9,6 +9,7 @@ import { Form, FormItem } from '@/components/ui/Form'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Alert from '@/components/ui/Alert'
+import AuthHashHandler from '@/components/auth/AuthHashHandler'
 import { getBrowserSupabase } from '@/services/supabase/browser'
 import { SignInFormSchema, type SignInFormData } from '@/@types/auth/forms/SignInFormData'
 import { forgotPasswordPath, homePath, signUpPath } from '@/configs/app.config'
@@ -24,6 +25,7 @@ export default function SignInForm() {
     const linkError = searchParams?.get('error') === 'link'
 
     const [formError, setFormError] = useState<string | null>(null)
+    const [showInviteHint, setShowInviteHint] = useState(false)
     const [redirecting, setRedirecting] = useState(false)
 
     const form = useForm<SignInFormData>({
@@ -40,6 +42,8 @@ export default function SignInForm() {
         setFormError(null)
         const { error } = await getBrowserSupabase().auth.signInWithPassword({ email, password })
         if (error) {
+            // A failed password is the usual sign that an invited account never finished setting one
+            setShowInviteHint(error.code === 'invalid_credentials' || error.status === 400)
             // Never say whether the email exists — only distinguish "can't reach the server" from a failed sign in
             setFormError(
                 error.name === 'AuthRetryableFetchError' || (error.status ?? 0) >= 500
@@ -54,15 +58,35 @@ export default function SignInForm() {
 
     return (
         <FormProvider {...form}>
+            <AuthHashHandler />
             <Form onSubmit={handleSubmit(onSubmit)} noValidate>
                 {linkError && !formError && (
                     <Alert type="warning" showIcon duration={0} className="mb-4">
-                        That link is invalid or has expired. Sign in, or request a new link.
+                        <span className="font-normal">
+                            That link has expired or was already used. Ask whoever invited you to send a new one, or{' '}
+                            <Link href={forgotPasswordPath} className="font-semibold underline">
+                                reset your password
+                            </Link>
+                            .
+                        </span>
                     </Alert>
                 )}
                 {formError && (
                     <Alert type="danger" showIcon duration={0} className="mb-4">
-                        {formError}
+                        <span className="font-normal">
+                            {formError}
+                            {showInviteHint && (
+                                <>
+                                    {' '}
+                                    If you were invited by email, open the link in that invitation to set your password
+                                    first — or{' '}
+                                    <Link href={forgotPasswordPath} className="font-semibold underline">
+                                        reset your password
+                                    </Link>
+                                    .
+                                </>
+                            )}
+                        </span>
                     </Alert>
                 )}
                 <FormItem label="Email" invalid={!!errors.email} errorMessage={errors.email?.message}>

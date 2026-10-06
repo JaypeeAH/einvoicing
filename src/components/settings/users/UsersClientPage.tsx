@@ -17,11 +17,11 @@ import EditMemberDialog from '@/components/settings/users/dialogs/EditMemberDial
 import RolesExplainer from '@/components/settings/users/RolesExplainer'
 import { useMembersStore } from '@/stores/MembersStore'
 import { useSessionStore } from '@/stores/SessionStore'
-import { apiRemoveMember } from '@/services/members'
+import { apiRemoveMember, apiResendInvitation } from '@/services/members'
 import { useSetBreadcrumbs } from '@/utils/hooks/useBreadcrumbs'
 import { MEMBER_STATUS_OPTIONS } from '@/@types/members/MemberStatusOptions'
 import { ROLES, ROLE_LABELS, ROLE_OWNER } from '@/constants/roles.constant'
-import { AddIcon, DeleteIcon, EditIcon, UsersNavIcon } from '@/configs/icons.config'
+import { AddIcon, DeleteIcon, EditIcon, EmailIcon, UsersNavIcon } from '@/configs/icons.config'
 import type { Member } from '@/@types/members/Member'
 
 const EMPTY_MEMBERS: Member[] = []
@@ -45,6 +45,24 @@ export default function UsersClientPage() {
     const [editing, setEditing] = useState<Member | null>(null)
     const [removing, setRemoving] = useState<Member | null>(null)
     const [removingBusy, setRemovingBusy] = useState(false)
+    const [resendingId, setResendingId] = useState<string | null>(null)
+
+    const onResend = async (member: Member) => {
+        setResendingId(member.id)
+        try {
+            const { kind } = await apiResendInvitation(member.id)
+            toastSuccess(
+                kind === 'invite'
+                    ? `Invitation sent again to ${member.email}.`
+                    : `${member.email} already has an account — we sent a link to set a new password.`,
+            )
+            refresh()
+        } catch (error) {
+            toastError('Could not send the invitation.', error)
+        } finally {
+            setResendingId(null)
+        }
+    }
 
     /** Why the current user can't change this member, or null when they can. */
     const getLockedReason = (member: Member) => {
@@ -105,6 +123,18 @@ export default function UsersClientPage() {
                 }
                 return (
                     <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                        {row.status === 'invited' && (
+                            <Tooltip title="Send the invitation email again" placement="left">
+                                <Button
+                                    size="xs"
+                                    variant="plain"
+                                    icon={<EmailIcon />}
+                                    aria-label="Resend invitation"
+                                    loading={resendingId === row.id}
+                                    onClick={() => onResend(row)}
+                                />
+                            </Tooltip>
+                        )}
                         <Button
                             size="xs"
                             variant="plain"

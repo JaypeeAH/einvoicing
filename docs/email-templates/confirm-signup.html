@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="x-apple-disable-message-reformatting" />
+        <meta name="color-scheme" content="light" />
+        <title>Confirm your email to start invoicing</title>
+        <!--[if mso
+            ]><style>
+                body,
+                table,
+                td,
+                a {
+                    font-family: Arial, Helvetica, sans-serif !important;
+                }
+            </style><!
+        [endif]-->
+        <style>
+            @media only screen and (max-width: 600px) {
+                .sm-px {
+                    padding-left: 20px !important;
+                    padding-right: 20px !important;
+                }
+                .sm-h1 {
+                    font-size: 22px !important;
+                }
+                .sm-block {
+                    display: block !important;
+                    width: 100% !important;
+                }
+            }
+        </style>
+    </head>
+    <body style="margin: 0; padding: 0; width: 100%; background-color: #f4f6fb">
+        <div style="display: none; max-height: 0; overflow: hidden; opacity: 0">
+            Confirm your email to start invoicing
+        </div>
+        <div style="display: none; max-height: 0; overflow: hidden">
+            &#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;
+        </div>
+
+        <table
+            role="presentation"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            width="100%"
+            style="background-color: #f4f6fb"
+        >
+            <tr>
+                <td align="center" style="padding: 32px 12px">
+                    <table
+                        role="presentation"
+                        cellpadding="0"
+                        cellspacing="0"
+                        border="0"
+                        width="600"
+                        style="width: 600px; max-width: 100%"
+                    >
+                        <!-- Brand -->
+                        <tr>
+                            <td align="center" style="padding: 0 0 24px">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td style="padding-right: 10px">
+                                            <div
+                                                style="
+                                                    width: 36px;
+                                                    height: 36px;
+                                                    line-height: 36px;
+                                                    text-align: center;
+                                                    border-radius: 10px;
+                                                    background-color: #2a85ff;
+                                                    color: #ffffff;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 18px;
+                                                    font-weight: bold;
+                                                "
+                                            >
+                                                &#9635;
+                                            </div>
+                                        </td>
+                                        <td
+                                            style="
+                                                font-family: Arial, Helvetica, sans-serif;
+                                                font-size: 17px;
+                                                font-weight: bold;
+                                                color: #171717;
+                                                letter-spacing: -0.2px;
+                                            "
+                                        >
+                                            SME e&#8209;Invoicing
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Card -->
+                        <tr>
+                            <td
+                                style="
+                                    background-color: #ffffff;
+                                    border: 1px solid #e6e8ee;
+                                    border-radius: 16px;
+                                    overflow: hidden;
+                                "
+                            >
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                    <tr>
+                                        <td
+                                            style="
+                                                height: 4px;
+                                                line-height: 4px;
+                                                font-size: 0;
+                                                background-color: #2a85ff;
+                                            "
+                                        >
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sm-px" style="padding: 36px 40px 8px">
+                                            <h1
+                                                class="sm-h1"
+                                                style="
+                                                    margin: 0 0 12px;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 26px;
+                                                    line-height: 1.25;
+                                                    font-weight: bold;
+                                                    color: #171717;
+                                                    letter-spacing: -0.4px;
+                                                "
+                                            >
+                                                Confirm your email
+                                            </h1>
+                                            <p
+                                                style="
+                                                    margin: 0 0 16px;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 16px;
+                                                    line-height: 1.65;
+                                                    color: #3f3f46;
+                                                "
+                                            >
+                                                Thanks for signing up to SME e&#8209;Invoicing. Confirm this address and
+                                                we&rsquo;ll take you straight to registering your business.
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0 0 16px;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 16px;
+                                                    line-height: 1.65;
+                                                    color: #3f3f46;
+                                                "
+                                            >
+                                                You&rsquo;ll need your BIR Certificate of Registration (Form 2303) handy
+                                                &mdash; your registered name, TIN and RDO have to match it exactly.
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Button -->
+                                    <tr>
+                                        <td class="sm-px" style="padding: 12px 40px 8px">
+                                            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                                <tr>
+                                                    <td
+                                                        align="center"
+                                                        style="border-radius: 12px; background-color: #2a85ff"
+                                                    >
+                                                        <a
+                                                            href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup&next=/onboarding"
+                                                            style="
+                                                                display: inline-block;
+                                                                padding: 14px 30px;
+                                                                font-family: Arial, Helvetica, sans-serif;
+                                                                font-size: 16px;
+                                                                font-weight: bold;
+                                                                color: #ffffff;
+                                                                text-decoration: none;
+                                                                border-radius: 12px;
+                                                            "
+                                                            >Confirm my email</a
+                                                        >
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Fallback link -->
+                                    <tr>
+                                        <td class="sm-px" style="padding: 20px 40px 36px">
+                                            <p
+                                                style="
+                                                    margin: 0 0 6px;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 13px;
+                                                    line-height: 1.6;
+                                                    color: #737373;
+                                                "
+                                            >
+                                                If the button doesn&rsquo;t work, copy and paste this address into your
+                                                browser:
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 0;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 13px;
+                                                    line-height: 1.6;
+                                                    word-break: break-all;
+                                                "
+                                            >
+                                                <a
+                                                    href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup&next=/onboarding"
+                                                    style="color: #0069f6; text-decoration: underline"
+                                                    >{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash
+                                                    }}&type=signup&next=/onboarding</a
+                                                >
+                                            </p>
+                                            <p
+                                                style="
+                                                    margin: 18px 0 0;
+                                                    padding-top: 18px;
+                                                    border-top: 1px solid #eef0f5;
+                                                    font-family: Arial, Helvetica, sans-serif;
+                                                    font-size: 13px;
+                                                    line-height: 1.6;
+                                                    color: #737373;
+                                                "
+                                            >
+                                                This link expires in 24 hours. If you didn&rsquo;t create an account,
+                                                you can safely ignore this email.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                            <td class="sm-px" style="padding: 24px 40px 0">
+                                <p
+                                    style="
+                                        margin: 0 0 6px;
+                                        font-family: Arial, Helvetica, sans-serif;
+                                        font-size: 12px;
+                                        line-height: 1.6;
+                                        color: #8b8f9a;
+                                        text-align: center;
+                                    "
+                                >
+                                    Sent to {{ .Email }}
+                                </p>
+                                <p
+                                    style="
+                                        margin: 0;
+                                        font-family: Arial, Helvetica, sans-serif;
+                                        font-size: 12px;
+                                        line-height: 1.6;
+                                        color: #8b8f9a;
+                                        text-align: center;
+                                    "
+                                >
+                                    BIR&#8209;ready electronic invoicing for Philippine small and medium enterprises.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

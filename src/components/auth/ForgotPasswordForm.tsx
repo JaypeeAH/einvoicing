@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button'
 import Alert from '@/components/ui/Alert'
 import { getBrowserSupabase } from '@/services/supabase/browser'
 import { ForgotPasswordFormSchema, type ForgotPasswordFormData } from '@/@types/auth/forms/ForgotPasswordFormData'
-import { changePasswordPath, signInPath } from '@/configs/app.config'
+import { setPasswordPath, signInPath } from '@/configs/app.config'
 
 /**
  * Sends a password reset link. Always shows the same message so the page never reveals whether an email
@@ -32,7 +32,7 @@ export default function ForgotPasswordForm() {
     const onSubmit = async ({ email }: ForgotPasswordFormData) => {
         try {
             await getBrowserSupabase().auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/auth/callback?next=${changePasswordPath}`,
+                redirectTo: `${window.location.origin}/auth/callback?next=${setPasswordPath}`,
             })
         } catch {
             // Same message either way — see above

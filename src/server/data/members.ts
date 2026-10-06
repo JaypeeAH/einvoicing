@@ -2,7 +2,7 @@ import 'server-only'
 
 import type { ServerSupabase } from '@/server/supabase/server'
 import { createAdminSupabase } from '@/server/supabase/admin'
-import { appUrl } from '@/configs/app.config'
+import { appUrl, setPasswordPath } from '@/configs/app.config'
 import { DataError, ForbiddenError } from '@/@types/errors'
 import type { Member } from '@/@types/members/Member'
 import type { InviteMemberFormData, UpdateMemberFormData } from '@/@types/members/forms/MemberFormData'
@@ -59,6 +59,18 @@ export const getMemberNames = async (supabase: ServerSupabase, organizationId: s
     return names
 }
 
+/** Where invitation and reset links come back to; the callback sends the visitor on to set a password. */
+const getInviteRedirectTo = () => `${appUrl}/auth/callback?next=${setPasswordPath}`
+
+const getOrganizationName = async (supabase: ServerSupabase, organizationId: string) => {
+    const { data } = await supabase
+        .from('organizations')
+        .select('registered_name, business_name')
+        .eq('id', organizationId)
+        .maybeSingle<{ registered_name: string; business_name: string | null }>()
+    return data?.business_name || data?.registered_name || ''
+}
+
 /**
  * Invites a person by email. New users get a Supabase invitation email and become active when they
  * follow the link; existing users are added straight away. Only owners can grant the owner role.
@@ -66,7 +78,7 @@ export const getMemberNames = async (supabase: ServerSupabase, organizationId: s
 export const inviteMember = async (
     supabase: ServerSupabase,
     organizationId: string,
-    actor: { id: string; role: Role },
+    actor: { id: string; role: Role; fullName: string },
     payload: InviteMemberFormData,
 ) => {
     if (payload.role === 'owner' && actor.role !== 'owner') {
@@ -85,8 +97,13 @@ export const inviteMember = async (
 
     if (!userId) {
         const { data, error } = await admin.auth.admin.inviteUserByEmail(payload.email, {
-            data: { full_name: payload.fullName },
-            redirectTo: `${appUrl}/auth/callback?next=/account/password`,
+            // Shown in the invitation email template
+            data: {
+                full_name: payload.fullName,
+                organization_name: await getOrganizationName(supabase, organizationId),
+                invited_by_name: actor.fullName,
+            },
+            redirectTo: getInviteRedirectTo(),
         })
         if (error) throw new DataError(error.message)
         userId = data.user.id
@@ -175,4 +192,49 @@ export const removeMember = async (
         .select('id')
     if (error) throw error
     if (!data?.length) throw new DataError('You cannot remove yourself.')
+}
+
+/**
+ * Sends the invitation email again. People who already finished signing up get a password-reset link
+ * instead, which lands on the same "set your password" page.
+ */
+export const resendInvitation = async (
+    supabase: ServerSupabase,
+    organizationId: string,
+    actor: { id: string; role: Role; fullName: string },
+    memberId: string,
+) => {
+    const { data: member, error } = await supabase
+        .from('organization_members')
+        .select('email, full_name, role, status')
+        .eq('id', memberId)
+        .eq('organization_id', organizationId)
+        .single<{ email: string; full_name: string; role: Role; status: Member['status'] }>()
+    if (error) throw error
+    if (member.status === 'suspended') {
+        throw new DataError('This person is suspended. Restore their access before sending an invitation.')
+    }
+    if (member.role === 'owner' && actor.role !== 'owner') {
+        throw new ForbiddenError('Only an owner can send an invitation to another owner.')
+    }
+
+    const admin = createAdminSupabase()
+    const invite = await admin.auth.admin.inviteUserByEmail(member.email, {
+        data: {
+            full_name: member.full_name,
+            organization_name: await getOrganizationName(supabase, organizationId),
+            invited_by_name: actor.fullName,
+        },
+        redirectTo: getInviteRedirectTo(),
+    })
+
+    if (invite.error) {
+        // Already has a usable account: a reset link gets them to the same place
+        const { error: resetError } = await admin.auth.resetPasswordForEmail(member.email, {
+            redirectTo: getInviteRedirectTo(),
+        })
+        if (resetError) throw new DataError(resetError.message)
+        return { email: member.email, kind: 'reset' as const }
+    }
+    return { email: member.email, kind: 'invite' as const }
 }

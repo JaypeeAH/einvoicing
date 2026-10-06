@@ -11,6 +11,13 @@ export const apiInviteMember = (data: InviteMemberFormData) =>
 export const apiUpdateMember = (memberId: string, data: UpdateMemberFormData) =>
     api.fetchJson<Member>({ method: 'put', url: `${membersPath}/${memberId}`, data })
 
+/** Sends the invitation email again. Returns whether an invite or a reset link was sent. */
+export const apiResendInvitation = (memberId: string) =>
+    api.fetchJson<{ email: string; kind: 'invite' | 'reset' }>({
+        method: 'post',
+        url: `${membersPath}/${memberId}/resend`,
+    })
+
 export const apiRemoveMember = (memberId: string) =>
     api.fetchJson<void>({ method: 'delete', url: `${membersPath}/${memberId}` })
 

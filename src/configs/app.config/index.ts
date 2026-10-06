@@ -30,6 +30,8 @@ export const apiPath = '/api'
 export const signInPath = '/sign-in'
 export const signUpPath = '/sign-up'
 export const forgotPasswordPath = '/forgot-password'
+/** Where an invitation or password-reset link lands: the visitor sets a password to finish. */
+export const setPasswordPath = '/set-password'
 export const onboardingPath = '/onboarding'
 export const accountPath = '/account'
 export const changePasswordPath = '/account/password'

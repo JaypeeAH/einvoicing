@@ -55,11 +55,11 @@ select id, public from storage.buckets where id = 'compliance-documents';
 
 **Project Settings → API Keys / Data API:**
 
-| Supabase value | Environment variable |
-| --- | --- |
-| Project URL | `NEXT_PUBLIC_SUPABASE_URL` |
+| Supabase value                                            | Environment variable                   |
+| --------------------------------------------------------- | -------------------------------------- |
+| Project URL                                               | `NEXT_PUBLIC_SUPABASE_URL`             |
 | Publishable key (`sb_publishable_…`) or legacy `anon` key | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` |
-| Secret key (`sb_secret_…`) or legacy `service_role` key | `SUPABASE_SECRET_KEY` (server only!) |
+| Secret key (`sb_secret_…`) or legacy `service_role` key   | `SUPABASE_SECRET_KEY` (server only!)   |
 
 - Local development: copy `.env.example` → `.env.local` and fill in the **test** project values.
 - Test deployment: use `.env.test.example` as the template (Vercel "Preview" environment).
@@ -72,9 +72,14 @@ The secret key bypasses row-level security. Only put it in server-side environme
 
 **Authentication → URL Configuration**
 
-- **Site URL**: your app URL (`NEXT_PUBLIC_APP_URL`), e.g. `https://einvoicing.example.com`.
-- **Redirect URLs**: add `https://einvoicing.example.com/auth/callback` (and
-  `http://localhost:3000/auth/callback` on the test project).
+- **Site URL**: your app URL (`NEXT_PUBLIC_APP_URL`), e.g. `https://jp-einvoicing.vercel.app`. Email links
+  are built from this, so a wrong value sends your team to the wrong place.
+- **Redirect URLs**: add a wildcard for every origin that may receive a link — otherwise Supabase quietly
+  falls back to the Site URL and links look like they "just open the homepage":
+    ```
+    https://jp-einvoicing.vercel.app/**
+    http://localhost:3000/**
+    ```
 
 **Authentication → Sign In / Providers → Email**
 
@@ -95,23 +100,20 @@ sign-ins). Optionally enable CAPTCHA (requires adding the CAPTCHA widget to the 
 **Authentication → Emails → SMTP Settings**: configure your own SMTP server for production (Supabase's
 built-in sender is heavily rate-limited and meant for testing).
 
-**Authentication → Emails → Templates** — point every link at the app's `/auth/callback` route so the
-links work for sign-up, invitations and password resets:
+**Authentication → Emails → Templates** — paste in the branded templates from
+[`email-templates/`](./email-templates/), one per Supabase template. Their README lists the subject lines and
+explains why the links must point at the app's `/auth/callback` route rather than `{{ .ConfirmationURL }}`:
 
-| Template | Link to use in the template body |
-| --- | --- |
-| Confirm signup | `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email&next=/onboarding` |
-| Invite user | `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account/password` |
-| Reset password | `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/account/password` |
-| Change email address | `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email_change&next=/account` |
+| Supabase template    | File                  | `type` in the link |
+| -------------------- | --------------------- | ------------------ |
+| Invite user          | `invite-user.html`    | `invite`           |
+| Confirm signup       | `confirm-signup.html` | `signup`           |
+| Reset password       | `reset-password.html` | `recovery`         |
+| Magic Link           | `magic-link.html`     | `magiclink`        |
+| Change email address | `change-email.html`   | `email_change`     |
 
-Example invite template:
-
-```html
-<h2>You have been invited</h2>
-<p>You were added to an organization on SME e-Invoicing. Click below to set your password.</p>
-<p><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account/password">Accept the invitation</a></p>
-```
+Leaving the stock templates in place is what causes "the link just opens the homepage, and then my password
+never works" — see the README for the detail.
 
 ## 5. Schedule EIS transmissions
 
