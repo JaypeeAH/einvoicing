@@ -1,0 +1,29 @@
+@layer components {
+    .table-default {
+        @apply min-w-full table-auto text-sm;
+    }
+    .table-default thead > tr > th {
+        @apply border-b border-gray-200 px-4 py-3 text-left text-xs font-semibold tracking-wide whitespace-nowrap text-gray-600 uppercase rtl:text-right dark:border-gray-700 dark:text-gray-300;
+    }
+    .table-default tbody > tr > td {
+        @apply border-b border-gray-100 px-4 py-3 text-gray-700 dark:border-gray-700 dark:text-gray-200;
+    }
+    .table-default tbody > tr:last-child > td {
+        @apply border-b-0;
+    }
+    .table-default tfoot > tr > td {
+        @apply border-t border-gray-200 px-4 py-3 font-semibold text-gray-900 dark:border-gray-700 dark:text-gray-100;
+    }
+    .table-hover tbody > tr:hover > td {
+        @apply bg-gray-50 dark:bg-gray-700/40;
+    }
+    .table-compact thead > tr > th,
+    .table-compact tbody > tr > td,
+    .table-compact tfoot > tr > td {
+        @apply px-3 py-2;
+    }
+    .table-border thead > tr > th,
+    .table-border tbody > tr > td {
+        @apply border border-gray-200 dark:border-gray-700;
+    }
+}

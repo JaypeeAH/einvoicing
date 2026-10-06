@@ -1,0 +1,26 @@
+@layer components {
+    .form-container.vertical {
+        @apply flex flex-col;
+    }
+    .form-container.inline {
+        @apply flex flex-col md:flex-row md:flex-wrap md:items-start md:gap-x-4;
+    }
+    .form-item {
+        @apply relative mb-6;
+    }
+    .form-item.vertical {
+        @apply flex flex-col;
+    }
+    .form-item.horizontal {
+        @apply flex flex-auto;
+    }
+    .form-item.inline {
+        @apply md:mb-0;
+    }
+    .form-label {
+        @apply flex items-center font-semibold text-gray-900 dark:text-gray-100;
+    }
+    .form-explain {
+        @apply absolute text-xs text-error;
+    }
+}

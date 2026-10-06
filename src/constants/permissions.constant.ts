@@ -1,0 +1,69 @@
+import {
+    ACTION_AUDIT_VIEW,
+    ACTION_COMPLIANCE_MANAGE,
+    ACTION_COMPLIANCE_VIEW,
+    ACTION_CUSTOMER_DELETE,
+    ACTION_CUSTOMER_MANAGE,
+    ACTION_INVOICE_ISSUE,
+    ACTION_INVOICE_VIEW,
+    ACTION_INVOICE_VOID,
+    ACTION_MEMO_ISSUE,
+    ACTION_PRODUCT_MANAGE,
+    ACTION_REPORT_VIEW,
+    ACTION_SETTINGS_MANAGE,
+    ACTION_USER_MANAGE,
+    type Action,
+} from '@/constants/actions.constant'
+import { type Role } from '@/constants/roles.constant'
+
+/**
+ * Role → allowed actions. Keep in sync with the `has_org_role(...)` checks in
+ * supabase/migrations (row-level security is the final authority).
+ */
+export const ROLE_PERMISSIONS: Record<Role, readonly Action[]> = {
+    owner: [
+        ACTION_INVOICE_VIEW,
+        ACTION_INVOICE_ISSUE,
+        ACTION_INVOICE_VOID,
+        ACTION_MEMO_ISSUE,
+        ACTION_CUSTOMER_MANAGE,
+        ACTION_CUSTOMER_DELETE,
+        ACTION_PRODUCT_MANAGE,
+        ACTION_REPORT_VIEW,
+        ACTION_COMPLIANCE_VIEW,
+        ACTION_COMPLIANCE_MANAGE,
+        ACTION_SETTINGS_MANAGE,
+        ACTION_USER_MANAGE,
+        ACTION_AUDIT_VIEW,
+    ],
+    admin: [
+        ACTION_INVOICE_VIEW,
+        ACTION_INVOICE_ISSUE,
+        ACTION_INVOICE_VOID,
+        ACTION_MEMO_ISSUE,
+        ACTION_CUSTOMER_MANAGE,
+        ACTION_CUSTOMER_DELETE,
+        ACTION_PRODUCT_MANAGE,
+        ACTION_REPORT_VIEW,
+        ACTION_COMPLIANCE_VIEW,
+        ACTION_COMPLIANCE_MANAGE,
+        ACTION_SETTINGS_MANAGE,
+        ACTION_USER_MANAGE,
+        ACTION_AUDIT_VIEW,
+    ],
+    accountant: [
+        ACTION_INVOICE_VIEW,
+        ACTION_INVOICE_ISSUE,
+        ACTION_INVOICE_VOID,
+        ACTION_MEMO_ISSUE,
+        ACTION_CUSTOMER_MANAGE,
+        ACTION_CUSTOMER_DELETE,
+        ACTION_PRODUCT_MANAGE,
+        ACTION_REPORT_VIEW,
+        ACTION_COMPLIANCE_VIEW,
+        ACTION_COMPLIANCE_MANAGE,
+        ACTION_AUDIT_VIEW,
+    ],
+    cashier: [ACTION_INVOICE_VIEW, ACTION_INVOICE_ISSUE, ACTION_CUSTOMER_MANAGE],
+    viewer: [ACTION_INVOICE_VIEW, ACTION_REPORT_VIEW, ACTION_COMPLIANCE_VIEW],
+}

@@ -1,0 +1,17 @@
+@layer components {
+    .header {
+        @apply sticky top-0 z-30 flex;
+    }
+    .header-wrapper {
+        @apply relative flex w-full items-center justify-between gap-2 px-4 sm:px-6;
+    }
+    .header-action {
+        @apply flex items-center gap-1;
+    }
+    .header-action-item {
+        @apply cursor-pointer rounded-xl p-2 text-gray-600 dark:text-gray-300;
+    }
+    .header-action-item-hoverable {
+        @apply transition-colors hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-gray-100;
+    }
+}

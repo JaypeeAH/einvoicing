@@ -1,0 +1,11 @@
+@layer components {
+    .skeleton {
+        @apply animate-pulse bg-gray-200 dark:bg-gray-600;
+    }
+    .skeleton-circle {
+        @apply rounded-full;
+    }
+    .skeleton-block {
+        @apply h-3 w-full rounded-lg;
+    }
+}

@@ -1,0 +1,5 @@
+@layer components {
+    .close-button {
+        @apply cursor-pointer rounded-lg text-xl text-gray-400 outline-none transition-colors hover:text-gray-800 dark:hover:text-gray-100;
+    }
+}

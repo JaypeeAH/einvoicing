@@ -1,0 +1,44 @@
+@layer components {
+    .avatar {
+        @apply relative inline-flex shrink-0 items-center justify-center overflow-hidden bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-100;
+    }
+    .avatar-circle {
+        @apply rounded-full;
+    }
+    .avatar-round {
+        @apply rounded-xl;
+    }
+    .avatar-square {
+        @apply rounded-none;
+    }
+    .avatar-img {
+        @apply block h-full w-full object-cover;
+    }
+    .avatar-string {
+        @apply absolute left-1/2 origin-center whitespace-nowrap;
+    }
+    .avatar-sm {
+        @apply h-8 w-8;
+    }
+    .avatar-md {
+        @apply h-10 w-10;
+    }
+    .avatar-lg {
+        @apply h-12 w-12;
+    }
+    .avatar-icon-sm {
+        @apply text-lg;
+    }
+    .avatar-icon-md {
+        @apply text-xl;
+    }
+    .avatar-icon-lg {
+        @apply text-2xl;
+    }
+    .avatar-group {
+        @apply inline-flex;
+    }
+    .avatar-group-chained .avatar {
+        @apply ring-2 ring-white ltr:-ml-2 rtl:-mr-2 dark:ring-gray-800;
+    }
+}

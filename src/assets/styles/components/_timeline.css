@@ -1,0 +1,32 @@
+@layer components {
+    .timeline {
+        @apply flex flex-col;
+    }
+    .timeline-item {
+        @apply flex min-h-[4rem];
+    }
+    .timeline-item-last {
+        @apply min-h-0;
+    }
+    .timeline-item-media {
+        @apply flex flex-col items-center;
+    }
+    .timeline-item-media-content {
+        @apply my-1;
+    }
+    .timeline-item-media-default {
+        @apply h-3 w-3 rounded-full bg-gray-300 dark:bg-gray-600;
+    }
+    .timeline-connect {
+        @apply h-full w-0.5 flex-auto bg-gray-200 dark:bg-gray-700;
+    }
+    .timeline-item-wrapper {
+        @apply flex flex-auto;
+    }
+    .timeline-item-content {
+        @apply flex-auto pb-6 ltr:ml-4 rtl:mr-4;
+    }
+    .timeline-item-content-last {
+        @apply pb-0;
+    }
+}

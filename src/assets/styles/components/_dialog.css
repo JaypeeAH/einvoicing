@@ -1,0 +1,26 @@
+@layer components {
+    .dialog-overlay {
+        @apply fixed inset-0 z-40 overflow-y-auto bg-black/60 opacity-0 transition-opacity duration-150;
+    }
+    .dialog-overlay-after-open {
+        @apply opacity-100;
+    }
+    .dialog-overlay-before-close {
+        @apply opacity-0;
+    }
+    .dialog {
+        @apply relative mx-auto my-16 max-w-[calc(100vw-2rem)] scale-95 outline-none transition-transform duration-150;
+    }
+    .dialog-after-open {
+        @apply scale-100;
+    }
+    .dialog-before-close {
+        @apply scale-95;
+    }
+    .dialog-content {
+        @apply relative h-full rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800;
+    }
+    .dialog-open {
+        @apply overflow-hidden;
+    }
+}

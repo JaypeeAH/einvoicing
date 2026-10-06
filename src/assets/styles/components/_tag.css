@@ -1,0 +1,8 @@
+@layer components {
+    .tag {
+        @apply inline-flex items-center gap-1 rounded-lg border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap;
+    }
+    .tag-affix {
+        @apply h-2 w-2 rounded-full bg-current;
+    }
+}

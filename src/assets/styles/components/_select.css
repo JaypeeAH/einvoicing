@@ -1,0 +1,49 @@
+@layer components {
+    .select {
+        @apply w-full text-sm;
+    }
+    .select .select-control {
+        @apply flex items-center rounded-xl border border-gray-200 bg-white transition-colors dark:border-gray-700 dark:bg-gray-700;
+    }
+    .select .select-control-invalid {
+        @apply border-error;
+    }
+    .select-value-container {
+        @apply flex-1 items-center gap-1 overflow-hidden px-3 py-1;
+    }
+    .select-placeholder {
+        @apply col-start-1 row-start-1;
+    }
+    .select-single-value {
+        @apply col-start-1 row-start-1 truncate font-semibold text-gray-900 dark:text-gray-100;
+    }
+    .select-input-container {
+        @apply col-start-1 row-start-1 text-gray-900 dark:text-gray-100;
+    }
+    .select-multi-value {
+        @apply flex items-center rounded-lg bg-gray-100 dark:bg-gray-600;
+    }
+    .select-multi-value-label {
+        @apply px-2 py-0.5 text-xs font-semibold text-gray-900 dark:text-gray-100;
+    }
+    .select-multi-value-remove {
+        @apply cursor-pointer rounded-r-lg px-1 hover:bg-error-subtle hover:text-error;
+    }
+    .select-indicators-container {
+        @apply flex items-center gap-1 px-2;
+    }
+    .select-dropdown-indicator,
+    .select-clear-indicator {
+        @apply flex cursor-pointer items-center text-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200;
+    }
+    .select-menu {
+        @apply mt-2 rounded-xl border border-gray-200 bg-white p-1 shadow-lg dark:border-gray-700 dark:bg-gray-800;
+    }
+    .select-option {
+        @apply flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 font-semibold text-gray-600 select-none hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700;
+    }
+    .select__menu-notice--no-options,
+    .select__menu-notice--loading {
+        @apply px-3 py-2 text-gray-400;
+    }
+}

@@ -1,0 +1,20 @@
+@layer components {
+    .side-nav {
+        @apply sticky top-0 h-screen shrink-0 transition-[width,min-width] duration-200;
+    }
+    .side-nav-bg {
+        @apply bg-white dark:bg-gray-800;
+    }
+    .side-nav-header {
+        @apply flex shrink-0;
+    }
+    .side-nav-content {
+        height: calc(100vh - 64px);
+    }
+    .side-nav:not(.side-nav-expand) .menu-item {
+        @apply justify-center px-0;
+    }
+    .page-container {
+        @apply min-w-0;
+    }
+}

@@ -1,0 +1,50 @@
+@layer components {
+    .steps {
+        @apply flex w-full items-center gap-2;
+    }
+    .steps-vertical {
+        @apply flex-col items-start gap-0;
+    }
+    .step-item {
+        @apply flex items-center;
+    }
+    .step-item:not(:last-child) {
+        @apply flex-auto;
+    }
+    .step-item-vertical {
+        @apply flex-col items-start;
+    }
+    .step-item-wrapper {
+        @apply flex items-center gap-2;
+    }
+    .step-clickable {
+        @apply cursor-pointer;
+    }
+    .step-item-icon {
+        @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 font-semibold text-gray-500 dark:border-gray-600;
+    }
+    .step-item-icon-complete {
+        @apply border-primary bg-primary text-neutral;
+    }
+    .step-item-icon-error {
+        @apply border-error text-error;
+    }
+    .step-item-title {
+        @apply font-semibold whitespace-nowrap text-gray-700 dark:text-gray-200;
+    }
+    .step-item-title-error {
+        @apply text-error;
+    }
+    .step-item-description {
+        @apply text-xs text-gray-500;
+    }
+    .step-connect {
+        @apply mx-3 h-0.5 flex-auto rounded-full bg-gray-200 dark:bg-gray-700;
+    }
+    .step-connect.complete {
+        @apply bg-primary;
+    }
+    .step-connect-vertical {
+        @apply mx-0 my-1 ml-[17px] h-6 w-0.5 flex-none;
+    }
+}

@@ -1,0 +1,14 @@
+@layer components {
+    .slider {
+        @apply relative flex h-6 w-full items-center;
+    }
+    .slider-track {
+        @apply h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-600;
+    }
+    .slider-bar {
+        @apply absolute h-1.5 rounded-full bg-primary;
+    }
+    .slider-thumb {
+        @apply absolute h-4 w-4 -translate-x-1/2 cursor-pointer rounded-full border-2 border-primary bg-white;
+    }
+}

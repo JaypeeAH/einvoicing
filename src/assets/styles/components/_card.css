@@ -1,0 +1,29 @@
+@layer components {
+    .card {
+        @apply relative rounded-2xl bg-white dark:bg-gray-800;
+    }
+    .card-border {
+        @apply border border-gray-200 dark:border-gray-700;
+    }
+    .card-shadow {
+        @apply border-b border-gray-200 shadow-sm dark:border-gray-700;
+    }
+    .card-header {
+        @apply px-5 py-4;
+    }
+    .card-header-border {
+        @apply border-b border-gray-200 dark:border-gray-700;
+    }
+    .card-header-extra {
+        @apply flex items-center justify-between gap-3;
+    }
+    .card-body {
+        @apply p-5;
+    }
+    .card-footer {
+        @apply rounded-br-2xl rounded-bl-2xl px-5 py-4;
+    }
+    .card-footer-border {
+        @apply border-t border-gray-200 dark:border-gray-700;
+    }
+}

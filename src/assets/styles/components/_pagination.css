@@ -1,0 +1,20 @@
+@layer components {
+    .pagination {
+        @apply flex flex-wrap items-center gap-1;
+    }
+    .pagination ul {
+        @apply flex items-center gap-1;
+    }
+    .pagination-pager {
+        @apply flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg px-2 font-semibold select-none;
+    }
+    .pagination-pager-inactive {
+        @apply text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-gray-100;
+    }
+    .pagination-pager-disabled {
+        @apply cursor-not-allowed text-gray-300 dark:text-gray-600;
+    }
+    .pagination-total {
+        @apply mr-3 font-semibold text-gray-500;
+    }
+}
