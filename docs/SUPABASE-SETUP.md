@@ -72,12 +72,12 @@ The secret key bypasses row-level security. Only put it in server-side environme
 
 **Authentication → URL Configuration**
 
-- **Site URL**: your app URL (`NEXT_PUBLIC_APP_URL`), e.g. `https://jp-einvoicing.vercel.app`. Email links
+- **Site URL**: your app URL (`NEXT_PUBLIC_APP_URL`), e.g. `https://test-einvoicing.vercel.app`. Email links
   are built from this, so a wrong value sends your team to the wrong place.
 - **Redirect URLs**: add a wildcard for every origin that may receive a link — otherwise Supabase quietly
   falls back to the Site URL and links look like they "just open the homepage":
     ```
-    https://jp-einvoicing.vercel.app/**
+    https://test-einvoicing.vercel.app/**
     http://localhost:3000/**
     ```
 
@@ -115,6 +115,18 @@ explains why the links must point at the app's `/auth/callback` route rather tha
 Leaving the stock templates in place is what causes "the link just opens the homepage, and then my password
 never works" — see the README for the detail.
 
+## 4b. When the app URL changes
+
+The address lives in exactly three places. Change all three together, or invitation and reset links will
+point at the old site:
+
+1. **Vercel → Settings → Environment Variables → `NEXT_PUBLIC_APP_URL`** (then redeploy). Invitation links
+   are built from this; if it is missing, they point at `http://localhost:3000`.
+2. **Supabase → Authentication → URL Configuration → Site URL** — what `{{ .SiteURL }}` becomes in emails.
+3. **Supabase → Authentication → URL Configuration → Redirect URLs** — add the new `https://…/**` entry.
+
+Keep the old entry in Redirect URLs until links already sent have expired (24 hours).
+
 ## 5. Schedule EIS transmissions
 
 When an organization turns on **EIS transmission** (after BIR issues its Permit to Transmit), each issued
@@ -131,7 +143,7 @@ select cron.schedule(
     '*/30 * * * *',
     $$
     select net.http_get(
-        url := 'https://einvoicing.example.com/api/cron/transmissions',
+        url := 'https://test-einvoicing.vercel.app/api/cron/transmissions',
         headers := jsonb_build_object('Authorization', 'Bearer YOUR_CRON_SECRET')
     );
     $$

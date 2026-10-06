@@ -41,11 +41,11 @@ browser-side fallback for older links, so invitations sent before this change st
 **Authentication → URL Configuration**
 
 - **Site URL** — the address the app runs on. This is what `{{ .SiteURL }}` becomes:
-    - production: `https://jp-einvoicing.vercel.app`
+    - production: `https://test-einvoicing.vercel.app`
     - a separate test project should point at its own URL
 - **Redirect URLs** — add every origin that may receive a link:
     ```
-    https://jp-einvoicing.vercel.app/**
+    https://test-einvoicing.vercel.app/**
     http://localhost:3000/**
     ```
 
@@ -71,6 +71,27 @@ Configuring SMTP fixes both at once, and costs nothing. Pick one:
 | **Brevo**                       | the easiest start    | Free 300 emails/day. Verify one sender address (your Gmail works) — no domain needed. Host `smtp-relay.brevo.com`, port `587`.                                                              |
 | **Gmail**                       | a quick test project | An [App Password](https://myaccount.google.com/apppasswords) (needs 2-step verification on). Host `smtp.gmail.com`, port `587`, user `you@gmail.com`. Mail arrives from your Gmail address. |
 | **Resend / SendGrid / Mailgun** | production           | A domain you own, with SPF and DKIM records. Best deliverability and the right "from" address for a real product.                                                                           |
+
+### Gmail, field by field
+
+| Supabase field | Value                                                |
+| -------------- | ---------------------------------------------------- |
+| Host           | `smtp.gmail.com`                                     |
+| Port           | `587`                                                |
+| Username       | **your full Gmail address** (e.g. `you@gmail.com`)   |
+| Password       | the 16-character app password                        |
+| Sender email   | the same Gmail address — Gmail rejects anything else |
+| Sender name    | e.g. `SME e-Invoicing`                               |
+
+The **Username is not the name you gave the app password**. That name (`einvoicing` in the App passwords
+list) is only a label so you can recognise and revoke it later; Google never uses it to sign in.
+
+Google shows the 16-character password **once, at the moment you create it**, and there is no way to look it
+up afterwards. If you didn't copy it, delete that entry and create a new one — the old one stops working as
+soon as you delete it. Paste it with or without the spaces; both work.
+
+Gmail sends roughly 500 emails a day and always shows your personal address as the sender, so it suits a test
+project. Move to a provider with your own domain before real customers use the app.
 
 Then in **Supabase → Project Settings → Authentication → SMTP Settings**: turn on _Enable Custom SMTP_, fill
 in host, port, username, password, and set the sender name and address. Save, and the template editor unlocks.
