@@ -58,6 +58,29 @@ to "do nothing but open the homepage".
 - **Minimum password length: 10**, and require **letters and digits** — the standard for computerised
   accounting systems (RMC 5-2021 Annex B). The app enforces the same rule.
 
+## You need your own SMTP sender first
+
+On the free plan Supabase shows **"Set up custom SMTP to edit templates"** — the templates above cannot be
+saved until a sender is configured. The built-in sender is also capped at a handful of emails per hour, which
+is what produces **"email rate limit exceeded"** when you invite two people in a row.
+
+Configuring SMTP fixes both at once, and costs nothing. Pick one:
+
+| Sender                          | Good for             | What it needs                                                                                                                                                                               |
+| ------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Brevo**                       | the easiest start    | Free 300 emails/day. Verify one sender address (your Gmail works) — no domain needed. Host `smtp-relay.brevo.com`, port `587`.                                                              |
+| **Gmail**                       | a quick test project | An [App Password](https://myaccount.google.com/apppasswords) (needs 2-step verification on). Host `smtp.gmail.com`, port `587`, user `you@gmail.com`. Mail arrives from your Gmail address. |
+| **Resend / SendGrid / Mailgun** | production           | A domain you own, with SPF and DKIM records. Best deliverability and the right "from" address for a real product.                                                                           |
+
+Then in **Supabase → Project Settings → Authentication → SMTP Settings**: turn on _Enable Custom SMTP_, fill
+in host, port, username, password, and set the sender name and address. Save, and the template editor unlocks.
+
+> Until SMTP is set up, you can still get people in: **Administration → Users & Roles** has a _Copy
+> invitation link_ button next to each invited person. It creates the same one-time link without sending an
+> email, so you can pass it on yourself.
+
+---
+
 **Authentication → Emails → SMTP Settings** — set up your own sender before going live. The built-in
 Supabase sender is rate-limited to a few messages per hour and is only meant for testing, so invitations to
 a real team will silently stop arriving.

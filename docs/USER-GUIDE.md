@@ -70,6 +70,10 @@ transmission**. Upload the documents (COR, sworn statement, permits) under **BIR
   button; it takes them straight into your business once they choose one. Invitations last 24 hours.
 - **Resend an invitation**: while someone still shows as _Invited_, use the ✉️ button on their row. If they
   already have an account, they get a link to set a new password instead.
+- **Send the link yourself**: the ⧉ button next to it copies a one-time invitation link to your clipboard.
+  Use it when email isn't set up yet or the sender hits its hourly limit — paste it into a chat message.
+  Treat it like a password: whoever holds it can set that person's password. It works once and expires in
+  24 hours.
 - **Change role / suspend**: open the user. Suspended users can no longer sign in to your organization.
 - **Remove**: when someone leaves the business, remove or suspend them the same day.
 - You cannot change your own role. Only an Owner can make someone else an Owner.

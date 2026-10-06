@@ -59,6 +59,12 @@ export const getMemberNames = async (supabase: ServerSupabase, organizationId: s
     return names
 }
 
+/** Supabase's built-in sender allows only a few emails an hour; say so in plain language. */
+const isEmailRateLimited = (message: string) => /rate limit|too many requests/i.test(message)
+
+const EMAIL_RATE_LIMIT_MESSAGE =
+    'The email sender has reached its hourly limit. Use “Copy invitation link” and send the link yourself, or set up your own SMTP sender in Supabase to lift the limit.'
+
 /** Where invitation and reset links come back to; the callback sends the visitor on to set a password. */
 const getInviteRedirectTo = () => `${appUrl}/auth/callback?next=${setPasswordPath}`
 
@@ -105,7 +111,9 @@ export const inviteMember = async (
             },
             redirectTo: getInviteRedirectTo(),
         })
-        if (error) throw new DataError(error.message)
+        if (error) {
+            throw new DataError(isEmailRateLimited(error.message) ? EMAIL_RATE_LIMIT_MESSAGE : error.message)
+        }
         userId = data.user.id
         status = 'invited'
     }
@@ -233,8 +241,64 @@ export const resendInvitation = async (
         const { error: resetError } = await admin.auth.resetPasswordForEmail(member.email, {
             redirectTo: getInviteRedirectTo(),
         })
-        if (resetError) throw new DataError(resetError.message)
+        if (resetError) {
+            throw new DataError(isEmailRateLimited(resetError.message) ? EMAIL_RATE_LIMIT_MESSAGE : resetError.message)
+        }
         return { email: member.email, kind: 'reset' as const }
     }
     return { email: member.email, kind: 'invite' as const }
+}
+
+/**
+ * Builds a one-time link to the "set your password" page without sending an email. Use it when the email
+ * sender is rate limited or unavailable: the owner passes the link to the person directly.
+ */
+export const createInvitationLink = async (
+    supabase: ServerSupabase,
+    organizationId: string,
+    actor: { id: string; role: Role },
+    memberId: string,
+) => {
+    const { data: member, error } = await supabase
+        .from('organization_members')
+        .select('email, role, status')
+        .eq('id', memberId)
+        .eq('organization_id', organizationId)
+        .single<{ email: string; role: Role; status: Member['status'] }>()
+    if (error) throw error
+    if (member.status === 'suspended') {
+        throw new DataError('This person is suspended. Restore their access before creating a link.')
+    }
+    if (member.role === 'owner' && actor.role !== 'owner') {
+        throw new ForbiddenError('Only an owner can create a link for another owner.')
+    }
+
+    const admin = createAdminSupabase()
+    const redirectTo = getInviteRedirectTo()
+
+    // `invite` only works for an address with no account yet; everyone else gets a password-reset link
+    let kind: 'invite' | 'recovery' = 'invite'
+    let generated = await admin.auth.admin.generateLink({
+        type: 'invite',
+        email: member.email,
+        options: { redirectTo },
+    })
+    if (generated.error) {
+        kind = 'recovery'
+        generated = await admin.auth.admin.generateLink({
+            type: 'recovery',
+            email: member.email,
+            options: { redirectTo },
+        })
+    }
+    if (generated.error) throw new DataError(generated.error.message)
+
+    const tokenHash = generated.data.properties?.hashed_token
+    if (!tokenHash) throw new DataError('Could not create an invitation link. Please try again.')
+
+    return {
+        email: member.email,
+        kind,
+        url: `${appUrl}/auth/callback?token_hash=${tokenHash}&type=${kind}&next=${setPasswordPath}`,
+    }
 }

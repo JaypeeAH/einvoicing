@@ -18,6 +18,16 @@ export const apiResendInvitation = (memberId: string) =>
         url: `${membersPath}/${memberId}/resend`,
     })
 
+/**
+ * Creates a one-time invitation link without sending an email (for when the sender is rate limited).
+ * Treat the link like a password: anyone holding it can set this person's password.
+ */
+export const apiCreateInvitationLink = (memberId: string) =>
+    api.fetchJson<{ email: string; kind: 'invite' | 'recovery'; url: string }>({
+        method: 'post',
+        url: `${membersPath}/${memberId}/invite-link`,
+    })
+
 export const apiRemoveMember = (memberId: string) =>
     api.fetchJson<void>({ method: 'delete', url: `${membersPath}/${memberId}` })
 

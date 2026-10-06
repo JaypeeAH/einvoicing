@@ -17,11 +17,11 @@ import EditMemberDialog from '@/components/settings/users/dialogs/EditMemberDial
 import RolesExplainer from '@/components/settings/users/RolesExplainer'
 import { useMembersStore } from '@/stores/MembersStore'
 import { useSessionStore } from '@/stores/SessionStore'
-import { apiRemoveMember, apiResendInvitation } from '@/services/members'
+import { apiCreateInvitationLink, apiRemoveMember, apiResendInvitation } from '@/services/members'
 import { useSetBreadcrumbs } from '@/utils/hooks/useBreadcrumbs'
 import { MEMBER_STATUS_OPTIONS } from '@/@types/members/MemberStatusOptions'
 import { ROLES, ROLE_LABELS, ROLE_OWNER } from '@/constants/roles.constant'
-import { AddIcon, DeleteIcon, EditIcon, EmailIcon, UsersNavIcon } from '@/configs/icons.config'
+import { AddIcon, DeleteIcon, DuplicateIcon, EditIcon, EmailIcon, UsersNavIcon } from '@/configs/icons.config'
 import type { Member } from '@/@types/members/Member'
 
 const EMPTY_MEMBERS: Member[] = []
@@ -46,6 +46,24 @@ export default function UsersClientPage() {
     const [removing, setRemoving] = useState<Member | null>(null)
     const [removingBusy, setRemovingBusy] = useState(false)
     const [resendingId, setResendingId] = useState<string | null>(null)
+
+    const [linkingId, setLinkingId] = useState<string | null>(null)
+
+    /** Fallback when email can't be sent: hand the person a link directly. */
+    const onCopyLink = async (member: Member) => {
+        setLinkingId(member.id)
+        try {
+            const { url } = await apiCreateInvitationLink(member.id)
+            await navigator.clipboard.writeText(url)
+            toastSuccess(
+                `Invitation link copied. Send it to ${member.email} yourself — it works once and expires in 24 hours.`,
+            )
+        } catch (error) {
+            toastError('Could not create an invitation link.', error)
+        } finally {
+            setLinkingId(null)
+        }
+    }
 
     const onResend = async (member: Member) => {
         setResendingId(member.id)
@@ -124,16 +142,28 @@ export default function UsersClientPage() {
                 return (
                     <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                         {row.status === 'invited' && (
-                            <Tooltip title="Send the invitation email again" placement="left">
-                                <Button
-                                    size="xs"
-                                    variant="plain"
-                                    icon={<EmailIcon />}
-                                    aria-label="Resend invitation"
-                                    loading={resendingId === row.id}
-                                    onClick={() => onResend(row)}
-                                />
-                            </Tooltip>
+                            <>
+                                <Tooltip title="Send the invitation email again" placement="left">
+                                    <Button
+                                        size="xs"
+                                        variant="plain"
+                                        icon={<EmailIcon />}
+                                        aria-label="Resend invitation"
+                                        loading={resendingId === row.id}
+                                        onClick={() => onResend(row)}
+                                    />
+                                </Tooltip>
+                                <Tooltip title="Copy an invitation link to send yourself" placement="left">
+                                    <Button
+                                        size="xs"
+                                        variant="plain"
+                                        icon={<DuplicateIcon />}
+                                        aria-label="Copy invitation link"
+                                        loading={linkingId === row.id}
+                                        onClick={() => onCopyLink(row)}
+                                    />
+                                </Tooltip>
+                            </>
                         )}
                         <Button
                             size="xs"
