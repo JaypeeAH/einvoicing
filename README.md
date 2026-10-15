@@ -11,7 +11,8 @@ RR 8-2022, RR 26-2025 and RMC 98-2026 (deadline **December 31, 2026**).
 - Sales Journal and Summary List of Sales with CSV export
 - Append-only audit trail, role-based access, 30-day password rotation
 - BIR registration tracker (COR, CAS AC, PTI, EIS certification, PTT) and e-invoicing coverage check
-- EIS transmission queue with a mock provider for testing and a signed (JWS) BIR provider for production
+- BIR EIS transmission (API v2.2/2.3, CAS e-invoice JSON v2.1): per-organization EIS credentials, one e-invoice
+  per tax classification, signed and encrypted batches, result inquiry; a simulated EIS for testing
 - Multi-business: one login can work for several taxpayers
 
 > BIR does not accredit invoicing software. Each taxpayer registers the system and obtains its own permits.
@@ -25,6 +26,7 @@ RR 8-2022, RR 26-2025 and RMC 98-2026 (deadline **December 31, 2026**).
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | How to use the app, per role (Owner, Admin, Accountant, Cashier, Viewer) |
 | [docs/SUPABASE-SETUP.md](docs/SUPABASE-SETUP.md) | Creating the test and production databases, auth settings, cron, backups |
 | [docs/BIR-COMPLIANCE.md](docs/BIR-COMPLIANCE.md) | BIR requirements → implementation, taxpayer steps, gaps |
+| [docs/bir-eis/](docs/bir-eis/README.md) | BIR EIS: certification process, API protocol, JSON format mapping, implementation (with BIR's source files) |
 
 ## Tech stack
 
@@ -61,7 +63,7 @@ branches, invoice series and BIR registrations.
 | Environment | Template | Supabase project | `NEXT_PUBLIC_APP_ENV` | `EIS_PROVIDER` |
 | --- | --- | --- | --- | --- |
 | Local | `.env.example` → `.env.local` | test | `test` | `mock` |
-| Test / UAT | `.env.test.example` | test | `test` | `mock` (or `bir` with sandbox credentials during EIS certification) |
+| Test / UAT | `.env.test.example` | test | `test` | `mock` (or `bir` with the sandbox EIS connection during EIS certification) |
 | Production | `.env.production.example` | production | `production` | `bir` (once a PTT is held) |
 
 Outside production a yellow **TEST ENVIRONMENT** bar is shown on every page.

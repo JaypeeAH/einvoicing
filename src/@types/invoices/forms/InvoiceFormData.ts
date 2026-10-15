@@ -1,5 +1,11 @@
 import { z } from 'zod'
-import { DOCUMENT_TYPES, MEMO_DOCUMENT_TYPES, SPECIAL_DISCOUNT_TYPES, TAX_TREATMENTS } from '@/constants/bir.constant'
+import {
+    DOCUMENT_TYPES,
+    EIS_CORRECTION_CODES,
+    MEMO_DOCUMENT_TYPES,
+    SPECIAL_DISCOUNT_TYPES,
+    TAX_TREATMENTS,
+} from '@/constants/bir.constant'
 import { isValidTin, normalizeTin } from '@/utils/tin'
 
 const optionalText = (max = 200) =>
@@ -75,6 +81,12 @@ export const InvoiceFormSchema = z
         specialDiscount: InvoiceSpecialDiscountFormSchema.nullable().optional(),
         referenceInvoiceId: z.string().uuid().nullable().optional(),
         adjustmentReason: optionalText(500),
+        /** EIS correction code of a memo (`CorrectionCd`); 09 when not chosen. */
+        correctionCode: z
+            .enum(EIS_CORRECTION_CODES)
+            .nullable()
+            .optional()
+            .transform((value) => value ?? null),
         manualInvoiceReference: optionalText(50),
         notes: optionalText(1000),
         lines: z.array(InvoiceLineFormSchema).min(1, 'Add at least one line'),

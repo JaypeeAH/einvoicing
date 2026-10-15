@@ -7,14 +7,15 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Select from '@/components/ui/Select'
 import Alert from '@/components/ui/Alert'
-import { toastError, toastSuccess } from '@/components/ui/toast/toast'
+import { toastError, toastSuccess, toastWarning } from '@/components/ui/toast/toast'
 import PageHeader from '@/components/shared/PageHeader'
 import DataTable, { type DataTableColumn } from '@/components/shared/DataTable'
 import EmptyState from '@/components/shared/EmptyState'
 import StatusBadge from '@/components/shared/StatusBadge'
+import EisConnectionCard from '@/components/transmissions/EisConnectionCard'
 import { useTransmissionsStore } from '@/stores/TransmissionsStore'
 import { useOrganizationStore } from '@/stores/OrganizationStore'
-import { apiSendTransmissions } from '@/services/transmissions'
+import { apiSendTransmissions, type EisRunSummary } from '@/services/transmissions'
 import useAuthority from '@/utils/hooks/useAuthority'
 import { useSetBreadcrumbs } from '@/utils/hooks/useBreadcrumbs'
 import { formatDateTime } from '@/utils/date'
@@ -42,7 +43,27 @@ const STATUS_OPTIONS: Option<TransmissionStatus | ''>[] = [
 const RETRYABLE: TransmissionStatus[] = ['queued', 'failed', 'rejected']
 const FINISHED: TransmissionStatus[] = ['accepted', 'cancelled']
 
-const isOverdue = (row: EisTransmission) => !FINISHED.includes(row.status) && dayjs(row.dueAt).isBefore(dayjs())
+/** Sent e-invoices meet the deadline even while BIR is still registering them. */
+const isOverdue = (row: EisTransmission) =>
+    !FINISHED.includes(row.status) && row.status !== 'sent' && dayjs(row.dueAt).isBefore(dayjs())
+
+const TRANS_CLASS_LABELS: Record<string, string> = {
+    '01': 'VATable',
+    '02': 'Zero-rated',
+    '03': 'VAT-exempt',
+    '04': 'RBE local sales',
+}
+
+const describeRun = (summary: EisRunSummary) =>
+    [
+        summary.sent && `${summary.sent} e-invoice(s) sent`,
+        summary.accepted && `${summary.accepted} registered by BIR`,
+        summary.rejected && `${summary.rejected} rejected`,
+        summary.failed && `${summary.failed} failed`,
+        summary.cancelled && `${summary.cancelled} not transmitted`,
+    ]
+        .filter(Boolean)
+        .join(', ')
 
 /** EIS transmission queue: status of each invoice sent to BIR, with send-now and retry. */
 export default function TransmissionsClientPage() {
@@ -59,8 +80,9 @@ export default function TransmissionsClientPage() {
     const onSendPending = async () => {
         setSendingAll(true)
         try {
-            await apiSendTransmissions()
-            toastSuccess('Pending invoices were sent. Check the status of each one below.')
+            const summary = await apiSendTransmissions()
+            if (summary.message) toastWarning(summary.message)
+            else toastSuccess(describeRun(summary) || 'Nothing was waiting to be sent.')
             refreshPage()
         } catch (error) {
             toastError('Could not send pending invoices.', error)
@@ -72,8 +94,9 @@ export default function TransmissionsClientPage() {
     const onRetry = async (row: EisTransmission) => {
         setRetryingId(row.id)
         try {
-            await apiSendTransmissions(row.id)
-            toastSuccess(`${row.invoiceNumber ?? 'Invoice'} was sent again.`)
+            const summary = await apiSendTransmissions(row.id)
+            if (summary.message) toastWarning(summary.message)
+            else toastSuccess(`${row.invoiceNumber ?? 'Invoice'}: ${describeRun(summary) || 'nothing to send'}.`)
             refreshPage()
         } catch (error) {
             toastError('Could not resend the invoice.', error)
@@ -121,7 +144,27 @@ export default function TransmissionsClientPage() {
             cell: (row) => <span className="whitespace-nowrap">{formatDateTime(row.lastAttemptAt) || '—'}</span>,
             hideBelow: 'lg',
         },
-        { key: 'birReference', header: 'BIR reference', cell: (row) => row.birReference || '—', hideBelow: 'lg' },
+        {
+            key: 'birReference',
+            header: 'EIS unique IDs',
+            cell: (row) =>
+                row.documents.length ? (
+                    <ul className="space-y-1 text-xs">
+                        {row.documents.map((document) => (
+                            <li key={document.uniqueId} className="whitespace-nowrap">
+                                <span className="font-mono">{document.uniqueId}</span>{' '}
+                                <span className="text-gray-500">
+                                    {TRANS_CLASS_LABELS[document.transClass] ?? document.transClass}
+                                    {document.resultCode ? ` · ${document.resultCode}` : ''}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    '—'
+                ),
+            hideBelow: 'lg',
+        },
         {
             key: 'response',
             header: 'Response',
@@ -172,10 +215,13 @@ export default function TransmissionsClientPage() {
                 <div className="font-normal">
                     Transmission only applies once your company turns on EIS transmission, after BIR issues you a Permit
                     to Transmit (PTT). From then on, each invoice must reach BIR within {EIS_TRANSMISSION_DAYS} days of
-                    issue.
+                    issue. A document with VATable, zero-rated and exempt items is sent as separate e-invoices, one per
+                    classification, as BIR requires.
                     {isTestEnvironment && ' This is a test environment: a mock EIS is used and nothing is sent to BIR.'}
                 </div>
             </Alert>
+
+            <EisConnectionCard />
 
             {eisEnabled === false && (
                 <Alert type="warning" showIcon className="mb-4" duration={0}>

@@ -29,6 +29,9 @@ export const EIS_CERTIFICATION_MONTHS_AFTER_PTI = 6
 /** Once a Permit to Transmit is held, e-invoices are transmitted within 3 calendar days (RR 8-2022). */
 export const EIS_TRANSMISSION_DAYS = 3
 
+/** e-Invoice JSON format version this app transmits (EIS e-invoice JSON File Format, Annex B). */
+export const EIS_JSON_FORMAT_VERSION = '2.1'
+
 /** Deadline for covered taxpayers to issue e-invoices (RR 26-2025, RMC 98-2026). */
 export const EINVOICING_DEADLINE = '2026-12-31'
 
@@ -208,12 +211,43 @@ export type TransmissionStatus = (typeof TRANSMISSION_STATUSES)[number]
 
 export const TRANSMISSION_STATUS_LABELS: Record<TransmissionStatus, string> = {
     queued: 'Queued',
-    sent: 'Sent',
+    sent: 'Sent — awaiting BIR result',
     accepted: 'Accepted by BIR',
     rejected: 'Rejected by BIR',
     failed: 'Failed (will retry)',
-    cancelled: 'Cancelled (voided)',
+    cancelled: 'Cancelled (not transmitted)',
 }
+
+/**
+ * Reason codes for corrected/adjusted e-invoices (`CorrectionCd`, EIS e-invoice JSON format v2.1 field 7).
+ * Credit memos must carry one; BIR's own guidance says to use 09 when the system cannot tell the reason.
+ */
+export const EIS_CORRECTION_CODES = ['01', '02', '03', '04', '05', '09'] as const
+export type EisCorrectionCode = (typeof EIS_CORRECTION_CODES)[number]
+
+export const EIS_CORRECTION_CODE_LABELS: Record<EisCorrectionCode, string> = {
+    '01': 'Error in the original document',
+    '02': 'Duplicate document',
+    '03': 'Increase/decrease of the contracted quantity or amount',
+    '04': 'Cancellation (full return without replacement)',
+    '05': 'Return for replacement',
+    '09': 'Other reason',
+}
+
+/** EIS environments: the certification sandbox (eis-cert.bir.gov.ph) or production (after the PTT). */
+export const EIS_ENVIRONMENTS = ['sandbox', 'production'] as const
+export type EisEnvironment = (typeof EIS_ENVIRONMENTS)[number]
+
+export const EIS_ENVIRONMENT_LABELS: Record<EisEnvironment, string> = {
+    sandbox: 'Sandbox (EIS certification tests)',
+    production: 'Production (after the Permit to Transmit)',
+}
+
+/** Sandbox API base URL. BIR emails the production URL when the PTT is approved (EIS Cert User Guide p. 31). */
+export const EIS_SANDBOX_BASE_URL = 'https://eis-cert.bir.gov.ph'
+
+/** An Invoice Issuance call carries 1 to 100 e-invoices (EIS API guide 7.2). */
+export const EIS_MAX_INVOICES_PER_SUBMISSION = 100
 
 // ---------------------------------------------------------------------------------------------------------
 // Compliance documents

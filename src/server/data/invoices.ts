@@ -10,7 +10,12 @@ import { getInvoiceIssueProblems } from '@/utils/invoices/validateInvoice'
 import { todayInManila } from '@/utils/date'
 import { hasAuthorityTo } from '@/utils/hasAuthority'
 import { ACTION_MEMO_ISSUE } from '@/constants/actions.constant'
-import { isMemoDocumentType, type SpecialDiscountType, type TransmissionStatus } from '@/constants/bir.constant'
+import {
+    isMemoDocumentType,
+    type EisCorrectionCode,
+    type SpecialDiscountType,
+    type TransmissionStatus,
+} from '@/constants/bir.constant'
 import { DataError, ForbiddenError, NotFoundError } from '@/@types/errors'
 import type { Collection } from '@/@types/collections'
 import type { Invoice } from '@/@types/invoices/Invoice'
@@ -68,6 +73,7 @@ interface InvoiceDetailsRow extends InvoiceRow {
     special_discount_holder_tin: string | null
     reference_invoice_id: string | null
     adjustment_reason: string | null
+    correction_code: EisCorrectionCode | null
     manual_invoice_reference: string | null
     notes: string | null
     seller_registered_name: string | null
@@ -292,6 +298,7 @@ export const getInvoiceDetails = async (
                 : null,
         referenceInvoice: referenceResult.data ? toReference(referenceResult.data) : null,
         adjustmentReason: row.adjustment_reason,
+        correctionCode: row.correction_code,
         manualInvoiceReference: row.manual_invoice_reference,
         notes: row.notes,
         adjustments: (adjustmentsResult.data ?? []).map(toReference),
@@ -362,6 +369,7 @@ export const saveInvoiceDraft = async (session: ApiSession, payload: InvoicePayl
         special_discount_holder_tin: specialDiscount?.holderTin ?? null,
         reference_invoice_id: isMemoDocumentType(payload.documentType) ? (payload.referenceInvoiceId ?? null) : null,
         adjustment_reason: isMemoDocumentType(payload.documentType) ? payload.adjustmentReason : null,
+        correction_code: isMemoDocumentType(payload.documentType) ? (payload.correctionCode ?? '09') : null,
         manual_invoice_reference: payload.manualInvoiceReference,
         notes: payload.notes,
     }

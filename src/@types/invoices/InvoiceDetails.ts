@@ -1,4 +1,4 @@
-import type { SpecialDiscountType, VatRegistration } from '@/constants/bir.constant'
+import type { EisCorrectionCode, SpecialDiscountType, VatRegistration } from '@/constants/bir.constant'
 import type { Invoice } from './Invoice'
 import type { InvoiceLine } from './InvoiceLine'
 
@@ -54,6 +54,8 @@ export interface InvoiceDetails extends Invoice {
     /** Credit/debit memos: the invoice being adjusted. */
     referenceInvoice: InvoiceReference | null
     adjustmentReason: string | null
+    /** Memos: EIS correction code (`CorrectionCd`). */
+    correctionCode: EisCorrectionCode | null
     /** Replaces a manual invoice issued during system downtime (RMC 98-2026 Sec. IV.11). */
     manualInvoiceReference: string | null
     notes: string | null

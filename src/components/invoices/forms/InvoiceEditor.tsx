@@ -30,9 +30,12 @@ import { formatPeso } from '@/utils/money'
 import { InvoiceFormSchema, type InvoiceFormData } from '@/@types/invoices/forms/InvoiceFormData'
 import {
     DOCUMENT_TYPE_LABELS,
+    EIS_CORRECTION_CODES,
+    EIS_CORRECTION_CODE_LABELS,
     SPECIAL_DISCOUNTS,
     SPECIAL_DISCOUNT_TYPES,
     isMemoDocumentType,
+    type EisCorrectionCode,
     type SpecialDiscountType,
 } from '@/constants/bir.constant'
 import { getInvoicePath, seriesPath } from '@/configs/app.config'
@@ -63,6 +66,11 @@ const PAYMENT_TERMS = ['Cash', 'Cash on delivery', 'Net 7 days', 'Net 15 days', 
 const SPECIAL_DISCOUNT_OPTIONS: Option<SpecialDiscountType>[] = SPECIAL_DISCOUNT_TYPES.map((value) => ({
     value,
     label: `${SPECIAL_DISCOUNTS[value].label} (${SPECIAL_DISCOUNTS[value].rate * 100}%)`,
+}))
+
+const CORRECTION_CODE_OPTIONS: Option<EisCorrectionCode>[] = EIS_CORRECTION_CODES.map((value) => ({
+    value,
+    label: `${value} — ${EIS_CORRECTION_CODE_LABELS[value]}`,
 }))
 
 /** Create or edit a draft invoice, credit memo or debit memo, then save or issue it. */
@@ -327,6 +335,27 @@ export default function InvoiceEditor({
                                         }}
                                         invalid={!!errors.referenceInvoiceId}
                                         isDisabled={!!initialReference}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    label="Type of adjustment"
+                                    extra="Reported to the BIR EIS as the correction code"
+                                >
+                                    <Controller
+                                        name="correctionCode"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select<Option<EisCorrectionCode>>
+                                                options={CORRECTION_CODE_OPTIONS}
+                                                value={
+                                                    CORRECTION_CODE_OPTIONS.find(
+                                                        (option) => option.value === (field.value ?? '09'),
+                                                    ) ?? null
+                                                }
+                                                onChange={(option) => field.onChange(option?.value ?? null)}
+                                                isSearchable={false}
+                                            />
+                                        )}
                                     />
                                 </FormItem>
                                 <FormItem

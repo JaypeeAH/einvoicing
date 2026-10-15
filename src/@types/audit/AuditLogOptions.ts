@@ -14,6 +14,7 @@ export const AUDIT_ACTION_OPTIONS: Record<AuditAction, BadgeOption<AuditAction>>
     print: { value: 'print', label: 'Printed', badgeClass: NEUTRAL },
     download: { value: 'download', label: 'Downloaded', badgeClass: NEUTRAL },
     export: { value: 'export', label: 'Exported', badgeClass: NEUTRAL },
+    test: { value: 'test', label: 'Tested', badgeClass: NEUTRAL },
 }
 
 /** Tables the audit trail records, with plain-language names. */
@@ -28,6 +29,7 @@ export const AUDIT_ENTITY_TYPE_LABELS: Record<string, string> = {
     registrations: 'BIR registrations',
     compliance_documents: 'Compliance documents',
     eis_transmissions: 'EIS transmissions',
+    eis_connections: 'EIS connection',
     coverage_assessments: 'E-invoicing coverage checks',
     reports: 'Reports',
 }

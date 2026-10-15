@@ -136,7 +136,9 @@ ForbiddenError 403, NotFoundError 404, ConflictError 409) and Postgres codes (42
 
 `server/data/<entity>.ts`: row interfaces (snake_case) + `toX()` mappers + functions taking
 `(supabase, organizationId, …)`. Use the user's client from `server/supabase/server.ts`.
-`server/supabase/admin.ts` (secret key) is only for `inviteMember` and `/api/cron/transmissions`.
+`server/supabase/admin.ts` (secret key) is only for `inviteMember`, the EIS job (`/api/cron/transmissions`,
+`/api/transmissions/send`) and EIS connections (`eis_connections` is service-role only) — always after a
+permission check.
 
 ---
 

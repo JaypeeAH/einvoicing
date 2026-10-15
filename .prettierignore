@@ -4,3 +4,6 @@ package-lock.json
 next-env.d.ts
 # The UI kit keeps its original formatting
 src/components/ui
+
+# BIR source files, kept exactly as published
+docs/bir-eis/source/

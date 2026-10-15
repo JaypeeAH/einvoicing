@@ -131,8 +131,15 @@ Keep the old entry in Redirect URLs until links already sent have expired (24 ho
 
 When an organization turns on **EIS transmission** (after BIR issues its Permit to Transmit), each issued
 invoice is queued and must reach BIR within 3 days. Users can press **Send pending now**, and a scheduled job
-should also call `GET /api/cron/transmissions` every 15–60 minutes with
-`Authorization: Bearer <CRON_SECRET>`.
+should also call `GET /api/cron/transmissions` every 10–15 minutes with
+`Authorization: Bearer <CRON_SECRET>`. The job both sends e-invoices and collects BIR's processing results
+(the EIS registers them asynchronously), so it must keep running even when nothing new is issued.
+
+> **Production requires a fixed outgoing IP.** The BIR EIS production API only accepts calls from up to four
+> IP addresses whitelisted on the EIS Certification portal (error E07). Serverless functions have no fixed IP,
+> so run this route on a host with a static egress IP or route it through a static-IP proxy. See
+> [docs/bir-eis/04-implementation.md](bir-eis/04-implementation.md#production-network-requirement). The
+> sandbox has no IP whitelist.
 
 **Option A — Supabase pg_cron** (works with any host). Enable the `pg_cron` and `pg_net` extensions
 (**Database → Extensions**), then run:
@@ -140,7 +147,7 @@ should also call `GET /api/cron/transmissions` every 15–60 minutes with
 ```sql
 select cron.schedule(
     'eis-transmissions',
-    '*/30 * * * *',
+    '*/10 * * * *',
     $$
     select net.http_get(
         url := 'https://test-einvoicing.vercel.app/api/cron/transmissions',
@@ -153,7 +160,7 @@ select cron.schedule(
 **Option B — Vercel Cron** (Pro plan for schedules more frequent than daily). Add a `vercel.json`:
 
 ```json
-{ "crons": [{ "path": "/api/cron/transmissions", "schedule": "*/30 * * * *" }] }
+{ "crons": [{ "path": "/api/cron/transmissions", "schedule": "*/10 * * * *" }] }
 ```
 
 Vercel sends `Authorization: Bearer $CRON_SECRET` automatically when the `CRON_SECRET` variable is set.

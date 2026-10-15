@@ -4,7 +4,7 @@ export interface AuditLog {
     organizationId: string
     userId: string | null
     userEmail: string | null
-    action: 'insert' | 'update' | 'delete' | 'issue' | 'void' | 'print' | 'download' | 'export'
+    action: 'insert' | 'update' | 'delete' | 'issue' | 'void' | 'print' | 'download' | 'export' | 'test'
     entityType: string
     entityId: string | null
     summary: string

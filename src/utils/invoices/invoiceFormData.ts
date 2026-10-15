@@ -37,6 +37,7 @@ export const getNewInvoiceDefaults = (input: {
     specialDiscount: null,
     referenceInvoiceId: null,
     adjustmentReason: '',
+    correctionCode: null,
     manualInvoiceReference: '',
     notes: '',
     lines: [emptyInvoiceLine(input.taxTreatment)],
@@ -65,6 +66,7 @@ export const toInvoiceFormData = (invoice: InvoiceDetails): InvoiceFormData => (
         : null,
     referenceInvoiceId: invoice.referenceInvoice?.id ?? null,
     adjustmentReason: invoice.adjustmentReason ?? '',
+    correctionCode: invoice.correctionCode,
     manualInvoiceReference: invoice.manualInvoiceReference ?? '',
     notes: invoice.notes ?? '',
     lines: invoice.lines.map((line) => ({
@@ -92,6 +94,7 @@ export const getMemoDefaults = (reference: InvoiceDetails, documentType: Documen
         dueDate: null,
         referenceInvoiceId: reference.id,
         adjustmentReason: '',
+        correctionCode: documentType === 'credit_memo' ? '05' : '03',
         manualInvoiceReference: '',
         notes: '',
         withholdingTaxRate: 0,
